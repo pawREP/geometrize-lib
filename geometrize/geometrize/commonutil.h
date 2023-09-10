@@ -48,6 +48,13 @@ template<typename T> T clamp(const T& value, const T& lower, const T& upper)
 }
 
 /**
+ * @brief getMostCommonImageColor Computes the most common RGB color of the pixels in the bitmap.
+ * @param image The image whose average color will be calculated.
+ * @return The most common RGB color of the image, RGBA8888 format. Alpha is set to opaque (255).
+ */
+geometrize::rgba getMostCommonImageColor(const geometrize::Bitmap& image);
+
+/**
  * @brief getAverageImageColor Computes the average RGB color of the pixels in the bitmap.
  * @param image The image whose average color will be calculated.
  * @return The average RGB color of the image, RGBA8888 format. Alpha is set to opaque (255).

@@ -1,8 +1,10 @@
 #include "commonutil.h"
 
 #include <algorithm>
+#include <bit>
 #include <cassert>
 #include <cstdint>
+#include <map>
 #include <random>
 #include <tuple>
 #include <vector>
@@ -30,6 +32,31 @@ std::int32_t randomRange(const std::int32_t min, const std::int32_t max)
 {
     assert(min <= max);
     return pick(mt, std::uniform_int_distribution<std::int32_t>::param_type{min, max});
+}
+
+geometrize::rgba getMostCommonImageColor(const geometrize::Bitmap& image) {
+    const auto& data{ image.getDataRef() };
+    const std::size_t size{ data.size() };
+    if(!size) 
+        return geometrize::rgba{ 0, 0, 0, 0 };
+
+    std::map<uint32_t, uint32_t> tally;
+
+    const std::size_t numPixels{ size / 4U };
+    for(std::size_t i = 0; i < numPixels; i++){
+        uint32_t key;
+        memcpy_s(&key, sizeof(key), &data[4 * i], sizeof(key));
+        if(!tally.contains(key))
+            tally[key] = 0;
+         tally[key]++;
+    }
+
+    auto it = std::max_element(tally.begin(), tally.end(),
+                                [](const std::pair<uint32_t, uint32_t>& lhs, const std::pair<uint32_t, uint32_t>& rhs) {
+                                    return lhs.second < rhs.second;
+                                });
+
+    return std::bit_cast<geometrize::rgba>(it->first);
 }
 
 geometrize::rgba getAverageImageColor(const geometrize::Bitmap& image)
